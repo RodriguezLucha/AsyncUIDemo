@@ -23,9 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+
 function createServiceUIs(i) {
   createStatus();
   createResult(i);
+}
+function resolveService(i, message) {
+  updateStatus(i);
+  updateResult(i, message);
 }
 
 function createStatus() {
@@ -39,14 +44,9 @@ function createResult(i) {
   let li = document.createElement('li');
   let content = document.createTextNode(`${i} : Pending.`);
   li.appendChild(content);
-  li.setAttribute('updatedTimestamp', new Date().getTime());
+  li.setAttribute('timestamp', new Date().getTime());
   li.setAttribute('id', i);
   document.getElementById('result-list').appendChild(li);
-}
-
-function resolveService(i, message) {
-  updateStatus(i);
-  updateResult(i, message);
 }
 
 function updateStatus(i){
@@ -54,16 +54,12 @@ function updateStatus(i){
 }
 
 function updateResult(nodeId, message) {
-  let list = document.getElementById('result-list');
   let nodes = Array.from(document.getElementById('result-list').children);
 
-  nodes.forEach(e => {
-    if(e.getAttribute('id') == nodeId) {
-      e.setAttribute('updatedTimestamp', new Date().getTime());
-      e.innerText = `${nodeId}. ${message}`;
-    }
-  });
+  let node = nodes.filter(node => node.getAttribute('id') == nodeId)[0];
+  node.setAttribute('timestamp', new Date().getTime());
+  node.innerText = `${nodeId}. ${message}`;
 
-  nodes.sort((a, b) => parseInt(b.getAttribute('updatedTimestamp')) - parseInt(a.getAttribute('updatedTimestamp')));
-  nodes.forEach(e => list.appendChild(e));
+  nodes.sort((a, b) => parseInt(b.getAttribute('timestamp')) - parseInt(a.getAttribute('timestamp')));
+  nodes.forEach(e => document.getElementById('result-list').appendChild(e));
 }
